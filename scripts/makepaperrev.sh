@@ -11,7 +11,7 @@ if [ -f Paper/paper.tex ]; then
 fi
 make clean
 make
-mv paper.pdf paper-$mcount.pdf
+mv paper.pdf "paper-${mcount}.pdf"
 git stash
 git stash drop
 # Ignore build errors

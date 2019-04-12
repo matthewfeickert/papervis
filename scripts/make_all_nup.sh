@@ -9,24 +9,24 @@ nup="9x6"
 # bothered to figure out how to do n-width digits in bash
 
 for pdfile in paper-?.pdf ; do
-    k=`echo $pdfile | cut -d- -f2 | cut -d. -f1`
-    if [ ! -f paper-00$k-$nup.pdf ]; then
-        pdfnup --nup $nup --suffix $nup --batch $pdfile
-        mv paper-$k-$nup.pdf paper-00$k-$nup.pdf
+    k=$(echo "${pdfile}" | cut -d- -f2 | cut -d. -f1)
+    if [ ! -f "paper-00${k}-${nup}.pdf" ]; then
+        pdfnup --nup "${nup}" --suffix "${nup}" --batch "${pdfile}"
+        mv "paper-${k}-${nup}.pdf" "paper-00${k}-${nup}.pdf"
     fi
 done
 
 for pdfile in paper-??.pdf; do
-    k=`echo $pdfile | cut -d- -f2 | cut -d. -f1`;
-    if [ ! -f paper-0$k-$nup.pdf ]; then
-        pdfnup --nup $nup --suffix $nup --batch $pdfile
-        mv paper-$k-$nup.pdf paper-0$k-$nup.pdf
+    k=$(echo "${pdfile}" | cut -d- -f2 | cut -d. -f1);
+    if [ ! -f "paper-00${k}-${nup}.pdf" ]; then
+        pdfnup --nup "${nup}" --suffix "${nup}" --batch "${pdfile}"
+        mv "paper-${k}-${nup}.pdf" "paper-0${k}-${nup}.pdf"
     fi
 done
 
 for pdfile in paper-???.pdf ; do
     if [ ! -f "${pdfile%.*}"-$nup.pdf ]; then
-        pdfnup --nup $nup --suffix $nup --batch $pdfile
+        pdfnup --nup "${nup}" --suffix "${nup}" --batch "${pdfile}"
     fi
 done
 
