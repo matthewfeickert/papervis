@@ -14,10 +14,7 @@ git clone depth -1 https://github.com/matthewfeickert/papervis.git /opt/papervis
 
 > Instructions describe inherited code workflow
 
-
-1. Clone the repo you want to visualize with repo name `Paper`
-2. Navigate into the repo (`cd Paper`)
-3. Configure the contents of the `Makefile` of the `Paper` repo to produce a PDF called `paper.pdf` 
-4. Determine the starting commit of your visualization and specify that in `make_all.sh`
-5. Generate the files for each commit (`bash make_all.sh`)
-6. Convert PDFs to PNGs and then animate to `.mp4` with `ffmpeg` (`bash make_all_nup.sh`)
+1. Get the HTTPS URL of the Git repo
+2. Get the commit hash of the Git repo to start at
+3. Run the driver to generate the files for each commit (`bash driver.sh $git_repo_HTTPS $start_commit_hash`)
+4. Convert PDFs to PNGs and then animate to `.mp4` with `ffmpeg` (`bash make_all_nup.sh`)
