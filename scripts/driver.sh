@@ -6,11 +6,6 @@ function prep_repo() {
     # 1: URL of Git repo
     git clone "${1}.git" build
     cd build
-    if [[ -f Makefile ]]; then
-        printf "\npapervis:\n\tlatexmk -\$(LATEX) -jobname=\"paper\" -logfilewarnings -halt-on-error \$(FILENAME)\n" >> Makefile
-    else
-        return 1
-    fi
     # TODO: This is test repo specific. Need to generalize
     make figures
 }
@@ -33,6 +28,11 @@ function makepaperrev() {
 function make_all() {
     # 1: the first commit hash to build
     while read -r rev; do
+        if [[ -f Makefile ]]; then
+            printf "\npapervis:\n\tlatexmk -\$(LATEX) -jobname=\"paper\" -logfilewarnings -halt-on-error \$(FILENAME)\n" >> Makefile
+        else
+            return 1
+        fi
         git checkout "$rev"
         makepaperrev
     done < <(git rev-list --reverse "${1}..master")
