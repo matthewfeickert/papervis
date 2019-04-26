@@ -101,6 +101,6 @@ function main() {
     fi
 }
 
-# bash scripts/driver.sh https://github.com/matthewfeickert/Dedman-Thesis-Latex-Template 2d8d5ca13127584578cdb9806fef98dbaab60a16
+# bash papervis.sh https://github.com/matthewfeickert/Dedman-Thesis-Latex-Template 2d8d5ca13127584578cdb9806fef98dbaab60a16
 
 main "$@" || return 1
