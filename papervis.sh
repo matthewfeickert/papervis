@@ -159,6 +159,9 @@ function main() {
         exit 1
     fi
 
+    # Clone and cd
+    prep_repo "${GIT_REPO_URL}"
+
     if [[ -z "${START_COMMIT_HASH}" ]]; then
         START_COMMIT_HASH="$(git rev-list --max-parents=0 HEAD)"
         printf "\n# Starting papervis at the first commit in the project Git repo: %s\n\n" "${START_COMMIT_HASH}"
@@ -167,8 +170,6 @@ function main() {
     fi
     sleep 2
 
-    # Execute
-    prep_repo "${GIT_REPO_URL}"
     if [[ ! -z "${MAKE_TARGET}" ]]; then
         make_all "${START_COMMIT_HASH}" "${MAKE_TARGET}"
     else
