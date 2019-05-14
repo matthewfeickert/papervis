@@ -52,3 +52,8 @@ bash papervis.sh \
 find build -iname "*.mp4"
 # build/papervis.mp4
 ```
+
+## Authors
+
+- [Leo Stein](https://duetosymmetry.com/) ([@duetosymmetry](https://github.com/duetosymmetry))
+- [Matthew Feickert](http://www.matthewfeickert.com/) ([@matthewfeickert](https://github.com/matthewfeickert))
