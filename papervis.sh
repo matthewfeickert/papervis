@@ -2,9 +2,28 @@
 
 set -e
 
+function print_usage {
+    cat 1>&2 <<EOF
+USAGE:
+    papervis [FLAGS] [OPTIONS]
+
+FLAGS:
+    -h, --help              Print help information and quit
+
+OPTIONS:
+        --url <url>         URL of the project Git repo (HTTPS or SSH)
+        --start <start>     Git commit hash to start at.
+                            If left blank it will default to the first commit
+                            in the project repo
+        --grid <grid>       The dimensions of the grid. Ex: 9x6
+        --name <name>       The name of the output .mp4 file. Default is papervis
+
+EOF
+}
+
 function prep_repo() {
     # 1: URL of Git repo
-    git clone "${1}.git" build
+    git clone --recursive "${1}" build
     cd build
     # TODO: This is test repo specific. Need to generalize
     make figures
@@ -40,6 +59,7 @@ function make_all() {
 
 function make_all_nup() {
     # 1: the dimensionality of the paper grid
+    # 2: the name of the output .mp4 file
     local grid_dimension
     grid_dimension="${1}"
 
@@ -66,7 +86,7 @@ function make_all_nup() {
         fi
     done
 
-    ffmpeg -y -pattern_type glob -i '*.png' -c:v libx264  -vf "fps=24,format=yuv420p" papervis.mp4
+    ffmpeg -y -pattern_type glob -i '*.png' -c:v libx264  -vf "fps=24,format=yuv420p" "${2}.mp4"
 
     for pdfile in paper-[0-9]*-$grid_dimension.pdf ; do
         echo "${pdfile}"
@@ -75,32 +95,72 @@ function make_all_nup() {
 
 function main() {
 
-    if [[ $# -gt 0 ]]; then
-        local git_repo_HTTPS
-        git_repo_HTTPS="${1}"
+    local GIT_REPO_URL
+    local START_COMMIT_HASH
+    local GRID_DIMENSION
+    local OUTPUT_NAME
+    OUTPUT_NAME="papervis"
 
-        prep_repo "${git_repo_HTTPS}"
+    while [[ $# -gt 0 ]]; do
+        arg="${1}"
+        case "${arg}" in
+            -h|--help)
+                print_usage
+                exit 0
+                ;;
+                # Additional options
+            --url)
+                GIT_REPO_URL="${2}"
+                shift
+                shift
+                ;;
+            --start)
+                START_COMMIT_HASH="${2}"
+                shift
+                shift
+                ;;
+            --grid)
+                GRID_DIMENSION="${2}"
+                shift
+                shift
+                ;;
+            --name)
+                OUTPUT_NAME="${2}"
+                shift
+                shift
+                ;;
+            *)
+                printf "\n    Invalid option: %s\n\n" "${1}"
+                print_usage
+                exit 1
+                ;;
+        esac
+    done
 
-        if [[ $# -gt 1 ]]; then
-            local start_commit_hash
-            start_commit_hash="${2}"
-            printf "\nstarting hash: %s" "${start_commit_hash}"
-            sleep 1
-
-            make_all "${start_commit_hash}"
-
-            local grid_dimension
-            if [[ $# -gt 2 ]]; then
-                grid_dimension="${3}"
-            else
-                grid_dimension="9x6"
-            fi
-            cd build
-            make_all_nup "${grid_dimension}"
-        fi
+    # Check input values
+    if [[ -z "${GIT_REPO_URL}" ]]; then
+        printf "\n# Enter the Git repo URL (HTTPS or SHH) with the --url option\n\n"
+        exit 1
     fi
-}
 
-# bash papervis.sh https://github.com/matthewfeickert/Dedman-Thesis-Latex-Template 2d8d5ca13127584578cdb9806fef98dbaab60a16
+    if [[ -z "${GRID_DIMENSION}" ]]; then
+        printf "\n# Enter the grid dimension with the --grid option\n# A example would be 9x6\n\n"
+        exit 1
+    fi
+
+    if [[ -z "${START_COMMIT_HASH}" ]]; then
+        START_COMMIT_HASH="$(git rev-list --max-parents=0 HEAD)"
+        printf "\n# Starting papervis at the first commit in the project Git repo: %s\n\n" "${START_COMMIT_HASH}"
+    else
+        printf "\n# Starting papervis at commit hash: %s\n\n" "${START_COMMIT_HASH}"
+    fi
+    sleep 2
+
+    # Execute
+    prep_repo "${GIT_REPO_URL}"
+    make_all "${START_COMMIT_HASH}"
+    cd build
+    make_all_nup "${GRID_DIMENSION}" "${OUTPUT_NAME}"
+}
 
 main "$@" || return 1
