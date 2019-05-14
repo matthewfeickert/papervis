@@ -17,6 +17,8 @@ OPTIONS:
                             in the project repo
         --grid <grid>       The dimensions of the grid. Ex: 9x6
         --name <name>       The name of the output .mp4 file. Default is papervis
+        --target <target>   The name of an optional Makefile target to run as
+                            part of the build
 
 EOF
 }
@@ -25,8 +27,6 @@ function prep_repo() {
     # 1: URL of Git repo
     git clone --recursive "${1}" build
     cd build
-    # TODO: This is test repo specific. Need to generalize
-    make figures
 }
 
 function makepaperrev() {
@@ -46,9 +46,14 @@ function makepaperrev() {
 
 function make_all() {
     # 1: the first commit hash to build
+    # 2: the optional make target
     while read -r rev; do
         if [[ -f Makefile ]]; then
-            printf "\npapervis:\n\tlatexmk -\$(LATEX) -jobname=\"paper\" -logfilewarnings -halt-on-error \$(FILENAME)\n" >> Makefile
+            if [[ $# -gt 1 ]]; then
+                printf "\npapervis: ${2}\n\tlatexmk -\$(LATEX) -jobname=\"paper\" -logfilewarnings -halt-on-error \$(FILENAME)\n" >> Makefile
+            else
+                printf "\npapervis:\n\tlatexmk -\$(LATEX) -jobname=\"paper\" -logfilewarnings -halt-on-error \$(FILENAME)\n" >> Makefile
+            fi
         else
             return 1
         fi
@@ -100,6 +105,7 @@ function main() {
     local GRID_DIMENSION
     local OUTPUT_NAME
     OUTPUT_NAME="papervis"
+    local MAKE_TARGET
 
     while [[ $# -gt 0 ]]; do
         arg="${1}"
@@ -126,6 +132,11 @@ function main() {
                 ;;
             --name)
                 OUTPUT_NAME="${2}"
+                shift
+                shift
+                ;;
+            --target)
+                MAKE_TARGET="${2}"
                 shift
                 shift
                 ;;
@@ -158,7 +169,11 @@ function main() {
 
     # Execute
     prep_repo "${GIT_REPO_URL}"
-    make_all "${START_COMMIT_HASH}"
+    if [[ ! -z "${MAKE_TARGET}" ]]; then
+        make_all "${START_COMMIT_HASH}" "${MAKE_TARGET}"
+    else
+        make_all "${START_COMMIT_HASH}"
+    fi
     cd build
     make_all_nup "${GRID_DIMENSION}" "${OUTPUT_NAME}"
 }
