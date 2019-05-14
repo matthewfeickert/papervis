@@ -47,7 +47,7 @@ FLAGS:
     -h, --help              Print help information and quit
 
 OPTIONS:
-        --url <url>         URL of the project Git repo (HTTPS or SSH)
+        --url <url>         URL of the project Git repo (HTTPS, SSH, or local path)
         --start <start>     Git commit hash to start at.
                             If left blank it will default to the first commit
                             in the project repo

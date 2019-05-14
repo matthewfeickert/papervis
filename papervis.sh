@@ -11,7 +11,7 @@ FLAGS:
     -h, --help              Print help information and quit
 
 OPTIONS:
-        --url <url>         URL of the project Git repo (HTTPS or SSH)
+        --url <url>         URL of the project Git repo (HTTPS, SSH, or local path)
         --start <start>     Git commit hash to start at.
                             If left blank it will default to the first commit
                             in the project repo
@@ -24,7 +24,7 @@ EOF
 }
 
 function prep_repo() {
-    # 1: URL of Git repo
+    # 1: URL or path of Git repo
     git clone --recursive "${1}" build
     cd build
 }
@@ -150,7 +150,7 @@ function main() {
 
     # Check input values
     if [[ -z "${GIT_REPO_URL}" ]]; then
-        printf "\n# Enter the Git repo URL (HTTPS or SHH) with the --url option\n\n"
+        printf "\n# Enter the Git repo URL (HTTPS, SSH, or local path) with the --url option\n\n"
         exit 1
     fi
 
