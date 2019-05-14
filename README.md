@@ -12,6 +12,28 @@ git clone depth -1 https://github.com/matthewfeickert/papervis.git /opt/papervis
 
 However, functionality to use it as a system wide command line utility hasn't been added yet. So for the time being you should clone it to wherever you'd like to run from.
 
+## Requirements
+
+`papervis` has the following dependencies:
+
+- Git
+- LaTeX
+- pdfnup # provided by LaTeX
+- latexmk # provided by LaTeX
+- awk
+- convert
+- ffmpeg
+
+and additionally requires that the Git repo you want to visualize has a `Makefile` with the following variables set in it:
+- `LATEX`
+- `FILENAME`
+
+Example:
+```
+FILENAME = analysis_paper
+LATEX = lualatex
+```
+
 ## Use
 
 You can query `papervis` for its options
