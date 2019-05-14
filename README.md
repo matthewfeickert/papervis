@@ -77,5 +77,5 @@ find build -iname "*.mp4"
 
 ## Authors
 
-- [Leo Stein](https://duetosymmetry.com/) ([@duetosymmetry](https://github.com/duetosymmetry))
 - [Matthew Feickert](http://www.matthewfeickert.com/) ([@matthewfeickert](https://github.com/matthewfeickert))
+- [Leo C. Stein](https://duetosymmetry.com/) ([@duetosymmetry](https://github.com/duetosymmetry))
