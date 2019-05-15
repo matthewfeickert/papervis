@@ -11,7 +11,7 @@ FLAGS:
     -h, --help              Print help information and quit
 
 OPTIONS:
-        --url <url>         URL of the project Git repo (HTTPS or SSH)
+        --url <url>         URL of the project Git repo (HTTPS, SSH, or local path)
         --start <start>     Git commit hash to start at.
                             If left blank it will default to the first commit
                             in the project repo
@@ -24,7 +24,7 @@ EOF
 }
 
 function prep_repo() {
-    # 1: URL of Git repo
+    # 1: URL or path of Git repo
     git clone --recursive "${1}" build
     cd build
 }
@@ -59,7 +59,7 @@ function make_all() {
         fi
         git checkout "$rev"
         makepaperrev
-    done < <(git rev-list --reverse "${1}..master")
+    done < <(git rev-list --reverse "${1}..origin/master")
 }
 
 function make_all_nup() {
@@ -150,7 +150,7 @@ function main() {
 
     # Check input values
     if [[ -z "${GIT_REPO_URL}" ]]; then
-        printf "\n# Enter the Git repo URL (HTTPS or SHH) with the --url option\n\n"
+        printf "\n# Enter the Git repo URL (HTTPS, SSH, or local path) with the --url option\n\n"
         exit 1
     fi
 
@@ -158,6 +158,9 @@ function main() {
         printf "\n# Enter the grid dimension with the --grid option\n# A example would be 9x6\n\n"
         exit 1
     fi
+
+    # Clone and cd
+    prep_repo "${GIT_REPO_URL}"
 
     if [[ -z "${START_COMMIT_HASH}" ]]; then
         START_COMMIT_HASH="$(git rev-list --max-parents=0 HEAD)"
@@ -167,8 +170,6 @@ function main() {
     fi
     sleep 2
 
-    # Execute
-    prep_repo "${GIT_REPO_URL}"
     if [[ ! -z "${MAKE_TARGET}" ]]; then
         make_all "${START_COMMIT_HASH}" "${MAKE_TARGET}"
     else
