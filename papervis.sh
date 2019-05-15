@@ -59,7 +59,7 @@ function make_all() {
         fi
         git checkout "$rev"
         makepaperrev
-    done < <(git rev-list --reverse "${1}..master")
+    done < <(git rev-list --reverse "${1}..origin/master")
 }
 
 function make_all_nup() {
