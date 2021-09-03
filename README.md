@@ -7,7 +7,7 @@ Visualize the paper writing process through your Git commit history
 This is custom software so it should be installed under `/opt` at
 
 ```
-git clone depth -1 https://github.com/matthewfeickert/papervis.git /opt/papervis
+git clone https://github.com/matthewfeickert/papervis.git /opt/papervis
 ```
 
 However, functionality to use it as a system wide command line utility hasn't been added yet. So for the time being you should clone it to wherever you'd like to run from.
